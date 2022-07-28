@@ -15,7 +15,6 @@ mutex broadcast_of_swim_access;
 
 void broadcast_of_swim(int counttime, string name, float speed, float distance, int result) {
 	broadcast_of_swim_access.lock();
-	distance = (float)counttime * speed;
 	if ((distance >= 100) && ((counttime - 1) * speed) < 100) {
 		result = counttime;
 		swimHistory.push_back(name);
@@ -63,7 +62,7 @@ int main()
 		distance2 = counttime * speed2;
 		distance3 = counttime * speed3;
 		distance4 = counttime * speed4;
-		distance5 = counttime * speed5;
+    	distance5 = counttime * speed5;
 		distance6 = counttime * speed6;
 		thread swim1(broadcast_of_swim, counttime, name1, speed1, distance1, result1);
 		thread swim2(broadcast_of_swim, counttime, name2, speed2, distance2, result2);
