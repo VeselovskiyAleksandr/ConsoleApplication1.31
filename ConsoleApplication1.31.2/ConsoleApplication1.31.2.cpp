@@ -22,9 +22,7 @@ void train_traffic_control(int travelTime, string trainNumber, int delay) {
     train_traffic_control_access.lock();
     cout << "\nПоезд номер" << trainNumber << " прибыл на вокзал (для отправления поезда введите depart).";
     string depart = "";
-    do {
         cin >> depart;
-    } while (depart != "depart");
     cout << "\nПоезд " << trainNumber << " отправляется.";
     cout << "\n     Счастливого пути!\n";
     depart = "";
