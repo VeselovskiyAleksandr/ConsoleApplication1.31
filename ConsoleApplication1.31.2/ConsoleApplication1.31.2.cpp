@@ -4,11 +4,8 @@
 #include <iostream>
 #include <locale.h>
 #include <string>
-#include <vector>
-#include <cmath>
 #include <thread>
 #include <mutex>
-#include <ctime>
 using namespace std;
 
 mutex train_traffic_control_access;
