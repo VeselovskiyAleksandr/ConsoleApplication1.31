@@ -2,10 +2,9 @@
 //Урок 28. Задача 1. Заплыв на 100 метров.
 
 #include <iostream>
-#include <locale.h>
+#include <clocale>
 #include <string>
 #include <vector>
-#include <cmath>
 #include <thread>
 #include <mutex>
 using namespace std;
@@ -14,71 +13,60 @@ vector <string> swimHistory;
 mutex broadcast_of_swim_access;
 
 void broadcast_of_swim(int counttime, string name, float speed, float distance, int result) {
+	while (distance < 100) {	
+		this_thread::sleep_for(chrono::seconds(1));
+		distance = counttime * speed;
+		if ((distance >= 100) && ((counttime - 1) * speed) < 100) {
+			result = counttime;
 	broadcast_of_swim_access.lock();
-	if ((distance >= 100) && ((counttime - 1) * speed) < 100) {
-		result = counttime;
-		swimHistory.push_back(name);
-		swimHistory.push_back(to_string(result));
-		cout << "\nПловец " << name << " финишировал.";
+			swimHistory.push_back(name);
+			swimHistory.push_back(to_string(result));
+			cout << "\nПловец " << name << " финишировал.";
+		broadcast_of_swim_access.unlock();
+		}
+		else {
+			broadcast_of_swim_access.lock();
+			cout << "\nПловец " << name << " проплыл " << distance << " метров.";
+			broadcast_of_swim_access.unlock();
+		}
+		counttime++;
 	}
-	else if ((counttime - 1) * speed > 100){
-		cout << "\nПловец " << name << " финишировал.";
-}
-	else {
-		cout << "\nПловец " << name << " проплыл " << distance << " метров.";
-	}
-
-	broadcast_of_swim_access.unlock();
 }
 
 int main()
 {
 	setlocale(LC_ALL, "Rus");
-	string name1 = "", name2 = "", name3 = "", name4 = "", name5 = "", name6 = "";
-	int result1 = 0, result2 = 0, result3 = 0, result4 = 0, result5 = 0, result6 = 0;
-	float speed1 = 0, speed2 = 0, speed3 = 0, speed4 = 0, speed5 = 0, speed6 = 0;
+	string name[6];
+	int result[6];
+	float speed[6];
+	float distance[6];
 	int counttime = 1;
-	float distance1 = 0., distance2 = 0., distance3 = 0., distance4 = 0., distance5 = 0., distance6 = 0.;
+		thread swim[6];
 	cout << "Укажите имена пловцов, участвующих в заплыве.\n";
-	cin >> name1;
-	cin >> name2;
-	cin >> name3;
-	cin >> name4;
-	cin >> name5;
-	cin >> name6;
+	for (int i = 0; i < 6; ++i) {
+		cin >> name[i];
+	}
 	cout << "Укажите скорости пловцов.\n";
-	cin >> speed1;
-	cin >> speed2;
-	cin >> speed3;
-	cin >> speed4;
-	cin >> speed5;
-	cin >> speed6;
-	cout << "\n           Все nловцы на старте.";
-	cout << "\n                 СТАРТ!!!";
+	for (int i = 0; i < 6; ++i) {
+		cin >> speed[i];
+	}
 
-	while (distance1 < 100 || distance2 < 100 || distance3 < 100 || distance4 < 100 || distance5 < 100 || distance6 < 100) {
-		this_thread::sleep_for(chrono::seconds(1));
-		distance1 = counttime * speed1;
-		distance2 = counttime * speed2;
-		distance3 = counttime * speed3;
-		distance4 = counttime * speed4;
-    	distance5 = counttime * speed5;
-		distance6 = counttime * speed6;
-		thread swim1(broadcast_of_swim, counttime, name1, speed1, distance1, result1);
-		thread swim2(broadcast_of_swim, counttime, name2, speed2, distance2, result2);
-		thread swim3(broadcast_of_swim, counttime, name3, speed3, distance3, result3);
-		thread swim4(broadcast_of_swim, counttime, name4, speed4, distance4, result4);
-		thread swim5(broadcast_of_swim, counttime, name5, speed5, distance5, result5);
-		thread swim6(broadcast_of_swim, counttime, name6, speed6, distance6, result6);
+	cout << "\n           Все nловцы на старте.";
+	cout << "\n                 СТАРТ!!!\n";
+
+		thread swim1(broadcast_of_swim, counttime, name[0], speed[0], distance[0], result[0]);
+		thread swim2(broadcast_of_swim, counttime, name[1], speed[1], distance[1], result[1]);
+		thread swim3(broadcast_of_swim, counttime, name[2], speed[2], distance[2], result[2]);
+		thread swim4(broadcast_of_swim, counttime, name[3], speed[3], distance[3], result[3]);
+		thread swim5(broadcast_of_swim, counttime, name[4], speed[4], distance[4], result[4]);
+		thread swim6(broadcast_of_swim, counttime, name[5], speed[5], distance[5], result[5]);
 		swim1.join();
 		swim2.join();
 		swim3.join();
 		swim4.join();
 		swim5.join();
 		swim6.join();
-		counttime++;
 		cout << "\n";
-	}
 	cout << "\nРезультаты участников заплыва: ";
 	for (int i = 0; i < swimHistory.size(); i +=2) {
 		cout << "\n " << i / 2 + 1 << " место " << swimHistory[i] << " результат " << swimHistory[i + 1];

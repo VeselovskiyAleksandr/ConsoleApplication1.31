@@ -2,13 +2,13 @@
 //Задача 2. Симуляция работы вокзала.
 
 #include <iostream>
-#include <locale.h>
+#include <clocale>
 #include <string>
 #include <thread>
 #include <mutex>
 using namespace std;
 
-mutex train_traffic_control_access;
+//mutex train_traffic_control_access;
 
 void train_traffic_control(int travelTime, string trainNumber, int delay) {
     train_traffic_control_access.lock();
