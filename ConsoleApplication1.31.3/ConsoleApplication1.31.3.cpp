@@ -2,7 +2,7 @@
 //Задание 3. Симуляция работы кухни онлайн-ресторана.
 
 #include <iostream>
-#include <locale.h>
+#include <clocale>
 #include <string>
 #include <thread>
 #include <mutex>
@@ -22,24 +22,24 @@ mutex preparation_orders_access;
 mutex order_delivery_access;
 
 void accepting_orders() {
-	int waitingOrder = 0, dish = 0, numberDish=0;
-	string nameDish = "";
+	int waitingOrder, dish, numberDish=0;
+	string nameDish;
 	do {
 		waitingOrder = rand() % 5 + 5;
 		this_thread::sleep_for(chrono::seconds(waitingOrder));
-		accepting_orders_access.lock();
 		dish = rand() % 5 + 5;
 		nameDish = menu[dish-5];
+		accepting_orders_access.lock();
 		cout << "\nПоступил заказ на " << nameDish;
+		accepting_orders_access.unlock();
 		acceptingOrders.push_back(nameDish);
 		nameDish = "";
-		accepting_orders_access.unlock();
 		numberDish++;
 	} while (numberDish < 10);
 }
 
 void preparation_orders() {
-	int orderPreparationTime=0, orderNumber=0;
+	int orderPreparationTime, orderNumber=0;
 	this_thread::sleep_for(chrono::seconds(15));
 	do{
 	orderPreparationTime = rand() % 10 + 5;
@@ -56,7 +56,7 @@ void preparation_orders() {
 }
 
 void order_delivery() {
-	int orderCount = 0;
+	int orderCount=0;
 	this_thread::sleep_for(chrono::seconds(30));
 	do {
 		order_delivery_access.lock();
@@ -79,7 +79,7 @@ int main()
 	restaurant.join();
 	kitchen.join();
 	order.join();
-	cout << "\n\nЛошади пьяны, хлопцы запряжёны.";
+	cout << "\n\nЛошади пьяны, хлопцы запряжёны.\n";
 	return 0;
 }
 
