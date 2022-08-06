@@ -8,21 +8,20 @@
 #include <mutex>
 using namespace std;
 
-//mutex train_traffic_control_access;
+mutex train_traffic_control_access;
 
 void train_traffic_control(int travelTime, string trainNumber, int delay) {
-    train_traffic_control_access.lock();
     this_thread::sleep_for(chrono::seconds(delay));
+    train_traffic_control_access.lock();
     cout << "\nПоезд " << trainNumber << " следует к вокзалу.";
     train_traffic_control_access.unlock();
     this_thread::sleep_for(chrono::seconds(travelTime));
     train_traffic_control_access.lock();
     cout << "\nПоезд номер" << trainNumber << " прибыл на вокзал (для отправления поезда введите depart).";
-    string depart = "";
+    string depart;
         cin >> depart;
     cout << "\nПоезд " << trainNumber << " отправляется.";
     cout << "\n     Счастливого пути!\n";
-    depart = "";
     this_thread::sleep_for(chrono::seconds(1));
     train_traffic_control_access.unlock();
 }
@@ -31,10 +30,9 @@ int main()
 {
     setlocale(LC_ALL, "Rus");
     string trainNumber1 = "21", trainNumber2 = "43", trainNumber3 = "111";
-    int travelTime1 = 0, travelTime2 = 0, travelTime3 = 0;
-    int delay1 = 1, delay2 = 2, delay3 = 1;
-    int departureTime1 = 0, departureTime2 = 0, departureTime3 = 0;
-    int interval = 0;
+    int travelTime1, travelTime2, travelTime3;
+    int delay1 = 1, delay2 = 2, delay3 = 4;
+    int departureTime1, departureTime2, departureTime3;
     cout << "\nПоезд №21. Укажите время следования до вокзала.";
     cin >> travelTime1;
     cout << "\nПоезд №43. Укажите время следования до вокзала.";
