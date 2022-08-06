@@ -5,7 +5,6 @@
 #include <clocale>
 #include <string>
 #include <thread>
-#include <mutex>
 #include <ctime>
 #include <vector>
 using namespace std;
@@ -17,10 +16,6 @@ string menu[5]={
 vector <string>acceptingOrders;
 vector <string>readyOrders;
 
-mutex accepting_orders_access;
-mutex preparation_orders_access;
-mutex order_delivery_access;
-
 void accepting_orders() {
 	int waitingOrder, dish, numberDish=0;
 	string nameDish;
@@ -29,9 +24,7 @@ void accepting_orders() {
 		this_thread::sleep_for(chrono::seconds(waitingOrder));
 		dish = rand() % 5 + 5;
 		nameDish = menu[dish-5];
-		accepting_orders_access.lock();
 		cout << "\nПоступил заказ на " << nameDish;
-		accepting_orders_access.unlock();
 		acceptingOrders.push_back(nameDish);
 		nameDish = "";
 		numberDish++;
@@ -43,14 +36,10 @@ void preparation_orders() {
 	this_thread::sleep_for(chrono::seconds(15));
 	do{
 	orderPreparationTime = rand() % 10 + 5;
-	preparation_orders_access.lock();
 	cout << "\nЗаказ № " << orderNumber+1<<" "<< acceptingOrders[orderNumber] << " поступил на кухню.";
-	preparation_orders_access.unlock();
 	this_thread::sleep_for(chrono::seconds(orderPreparationTime));
-    preparation_orders_access.lock();
 	cout << "\nЗаказ № " << orderNumber+1 << " " << acceptingOrders[orderNumber] << " готов.";
 	readyOrders.push_back(acceptingOrders[orderNumber]);
-	preparation_orders_access.unlock();
 	orderNumber++;
 	} while (orderNumber < 10);
 }
@@ -59,13 +48,9 @@ void order_delivery() {
 	int orderCount=0;
 	this_thread::sleep_for(chrono::seconds(30));
 	do {
-		order_delivery_access.lock();
 		cout << "\nКурьер принял готовый заказ № "<< orderCount+1;
-		order_delivery_access.unlock();
 		this_thread::sleep_for(chrono::seconds(30));
-		order_delivery_access.lock();
 		cout << "\nЗаказ № "<< orderCount+1<<" "<< readyOrders[orderCount]<<" доставлен.";
-		order_delivery_access.unlock();
 		orderCount++;
 	} while (orderCount < 10);
 }
