@@ -17,6 +17,10 @@ string menu[5]={
 vector <string>acceptingOrders;
 vector <string>readyOrders;
 
+mutex acceptingOrders_access;
+mutex readyOrders_access;
+mutex information_board_access;
+
 void accepting_orders() {
 	int waitingOrder, dish, numberDish=0;
 	string nameDish;
@@ -25,8 +29,12 @@ void accepting_orders() {
 		this_thread::sleep_for(chrono::seconds(waitingOrder));
 		dish = rand() % 5;
 		nameDish = menu[dish];
+		information_board_access.lock();
 		cout << "\nПоступил заказ на " << nameDish;
+		information_board_access.unlock();
+		acceptingOrders_access.lock();
 		acceptingOrders.push_back(nameDish);
+		acceptingOrders_access.unlock();
 		nameDish = "";
 		numberDish++;
 	} while (numberDish < 10);
@@ -37,10 +45,16 @@ void preparation_orders() {
 	this_thread::sleep_for(chrono::seconds(15));
 	do{
 	orderPreparationTime = rand() % 10 + 5;
+	information_board_access.lock();
 	cout << "\nЗаказ № " << orderNumber+1<<" "<< acceptingOrders[orderNumber] << " поступил на кухню.";
+	information_board_access.unlock();
 	this_thread::sleep_for(chrono::seconds(orderPreparationTime));
+	information_board_access.lock();
 	cout << "\nЗаказ № " << orderNumber+1 << " " << acceptingOrders[orderNumber] << " готов.";
+	information_board_access.unlock();
+	readyOrders_access.lock();
 	readyOrders.push_back(acceptingOrders[orderNumber]);
+	readyOrders_access.unlock();
 	orderNumber++;
 	} while (orderNumber < 10);
 }
@@ -49,9 +63,13 @@ void order_delivery() {
 	int orderCount=0;
 	this_thread::sleep_for(chrono::seconds(30));
 	do {
+		information_board_access.lock();
 		cout << "\nКурьер принял готовый заказ № "<< orderCount+1;
+		information_board_access.unlock();
 		this_thread::sleep_for(chrono::seconds(30));
+		information_board_access.lock();
 		cout << "\nЗаказ № "<< orderCount+1<<" "<< readyOrders[orderCount]<<" доставлен.";
+		information_board_access.unlock();
 		orderCount++;
 	} while (orderCount < 10);
 }
