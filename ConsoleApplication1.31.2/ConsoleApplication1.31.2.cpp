@@ -8,22 +8,22 @@
 #include <mutex>
 using namespace std;
 
-mutex train_traffic_control_access;
+mutex information_board_access;
 
 void train_traffic_control(int travelTime, string trainNumber, int delay) {
     this_thread::sleep_for(chrono::seconds(delay));
-    train_traffic_control_access.lock();
+    information_board_access.lock();
     cout << "\nПоезд " << trainNumber << " следует к вокзалу.";
-    train_traffic_control_access.unlock();
+    information_board_access.unlock();
     this_thread::sleep_for(chrono::seconds(travelTime));
-    train_traffic_control_access.lock();
+    information_board_access.lock();
     cout << "\nПоезд номер" << trainNumber << " прибыл на вокзал (для отправления поезда введите depart).";
     string depart;
         cin >> depart;
     cout << "\nПоезд " << trainNumber << " отправляется.";
     cout << "\n     Счастливого пути!\n";
     this_thread::sleep_for(chrono::seconds(1));
-    train_traffic_control_access.unlock();
+    information_board_access.unlock();
 }
 
 int main()

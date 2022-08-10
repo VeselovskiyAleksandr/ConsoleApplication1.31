@@ -7,6 +7,7 @@
 #include <thread>
 #include <ctime>
 #include <vector>
+#include <mutex>
 using namespace std;
 
 string menu[5]={
@@ -22,8 +23,8 @@ void accepting_orders() {
 	do {
 		waitingOrder = rand() % 5 + 5;
 		this_thread::sleep_for(chrono::seconds(waitingOrder));
-		dish = rand() % 5 + 5;
-		nameDish = menu[dish-5];
+		dish = rand() % 5;
+		nameDish = menu[dish];
 		cout << "\nПоступил заказ на " << nameDish;
 		acceptingOrders.push_back(nameDish);
 		nameDish = "";
