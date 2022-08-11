@@ -9,6 +9,7 @@
 using namespace std;
 
 mutex information_board_access;
+mutex train_traffic_control_access;
 
 void train_traffic_control(int travelTime, string trainNumber, int delay) {
     this_thread::sleep_for(chrono::seconds(delay));
@@ -16,6 +17,7 @@ void train_traffic_control(int travelTime, string trainNumber, int delay) {
     cout << "\nПоезд " << trainNumber << " следует к вокзалу.";
     information_board_access.unlock();
     this_thread::sleep_for(chrono::seconds(travelTime));
+    train_traffic_control_access.lock();
     information_board_access.lock();
     cout << "\nПоезд номер" << trainNumber << " прибыл на вокзал (для отправления поезда введите depart).";
     string depart;
@@ -24,6 +26,7 @@ void train_traffic_control(int travelTime, string trainNumber, int delay) {
     cout << "\n     Счастливого пути!\n";
     this_thread::sleep_for(chrono::seconds(1));
     information_board_access.unlock();
+    train_traffic_control_access.lock();
 }
 
 int main()
