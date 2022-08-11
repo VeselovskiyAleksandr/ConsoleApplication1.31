@@ -46,11 +46,15 @@ void preparation_orders() {
 	do{
 	orderPreparationTime = rand() % 10 + 5;
 	information_board_access.lock();
+	acceptingOrders_access.lock();
 	cout << "\nЗаказ № " << orderNumber+1<<" "<< acceptingOrders[orderNumber] << " поступил на кухню.";
+	acceptingOrders_access.unlock();
 	information_board_access.unlock();
 	this_thread::sleep_for(chrono::seconds(orderPreparationTime));
 	information_board_access.lock();
+	acceptingOrders_access.lock();
 	cout << "\nЗаказ № " << orderNumber+1 << " " << acceptingOrders[orderNumber] << " готов.";
+	acceptingOrders_access.unlock();
 	information_board_access.unlock();
 	readyOrders_access.lock();
 	readyOrders.push_back(acceptingOrders[orderNumber]);
@@ -68,7 +72,9 @@ void order_delivery() {
 		information_board_access.unlock();
 		this_thread::sleep_for(chrono::seconds(30));
 		information_board_access.lock();
+		acceptingOrders_access.lock();
 		cout << "\nЗаказ № "<< orderCount+1<<" "<< readyOrders[orderCount]<<" доставлен.";
+		acceptingOrders_access.unlock();
 		information_board_access.unlock();
 		orderCount++;
 	} while (orderCount < 10);
