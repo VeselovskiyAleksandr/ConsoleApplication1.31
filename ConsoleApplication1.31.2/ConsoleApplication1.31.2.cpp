@@ -26,7 +26,7 @@ void train_traffic_control(int travelTime, string trainNumber, int delay) {
     cout << "\n     Счастливого пути!\n";
     this_thread::sleep_for(chrono::seconds(1));
     information_board_access.unlock();
-    train_traffic_control_access.lock();
+    train_traffic_control_access.unlock();
 }
 
 int main()
